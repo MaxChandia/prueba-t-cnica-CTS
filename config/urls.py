@@ -1,8 +1,7 @@
-
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('usuarios/', UserCreateView.as_view(), name='user-create'),
-]
+    path('api/', include('usuarios.urls')), 
+]   
