@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import User
 from django.core.signing import Signer
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -41,6 +43,23 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class PasswordCreationSerializer(serializers.Serializer):
     token = serializers.CharField()
     password = serializers.CharField(write_only=True)
+
+    def validate_password(self, value):
+        try:
+            validate_password(value)
+        except ValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        
+        if not any(char.isupper() for char in value):
+            raise serializers.ValidationError("La contraseña debe contener al menos una letra mayúscula.")
+        
+        if not any(char in '!@#$%^&*()_+-=[]{}|;:",.<>/?~' for char in value):
+            raise serializers.ValidationError("La contraseña debe contener al menos un carácter especial.")
+
+        if not 6 <= len(value) <= 12:
+            raise serializers.ValidationError("La contraseña debe tener entre 6 y 12 caracteres.")
+            
+        return value
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
