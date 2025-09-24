@@ -3,6 +3,7 @@ from .models import User
 from django.core.signing import Signer
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    phone_number = serializers.CharField(required=True)
     class Meta:
         model = User
         fields = ['full_name', 'email', 'phone_number']
