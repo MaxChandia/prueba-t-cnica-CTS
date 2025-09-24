@@ -23,7 +23,7 @@ urlpatterns = [
     
     path('usuarios/', UserListAPIView.as_view(), name='api-usuarios'),
     
-    # Ruta para que el admin gestione a los ganadores
+    # Ruta para que el admin gestione a los ganadores del concurso
     
     path('ganadores/', WinnerManagementAPIView.as_view(), name='api-ganadores'),
 ]
