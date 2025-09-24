@@ -2,8 +2,24 @@ from rest_framework import serializers
 from .models import User
 from django.core.signing import Signer
 
+
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    phone_number = serializers.CharField(required=True)
+    phone_number = serializers.CharField(required=True) 
+
+    class Meta:
+        model = User
+        fields = ['full_name', 'email', 'phone_number']
+
+    def validate_phone_number(self, value):
+        if len(value) != 12:
+            raise serializers.ValidationError("El número de teléfono debe tener 12 caracteres (+569 y 8 dígitos).")
+        if not value.startswith('+569'):
+            raise serializers.ValidationError("El número de teléfono debe empezar con +569.")
+        if not value[4:].isdigit():
+            raise serializers.ValidationError("El número de teléfono solo puede contener dígitos después del prefijo.")
+
+        return value
+
     class Meta:
         model = User
         fields = ['full_name', 'email', 'phone_number']
