@@ -8,8 +8,9 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         fields = ['full_name', 'email', 'phone_number']
 
     def create(self, validated_data):
+        email = validated_data.pop('email')
         user = User.objects.create_user(
-            email=validated_data['email'],
+            email=email,
             password=None,
             **validated_data
         )
@@ -23,6 +24,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 class PasswordCreationSerializer(serializers.Serializer):
     token = serializers.CharField()
     password = serializers.CharField(write_only=True)
+    
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'full_name', 'email', 'phone_number', 'is_verified', 'is_winner']
 
-# Creamos los validadores para el registro de usuarios y generamos el token de verificación para el email.
+# Creamos los validadores para el registro de usuarios y generamos el token de verificación para el email, además el serializador para el listado de usuarios.
 # También creamos el serializador para la creación de la contraseña a partir del token enviado al email.
